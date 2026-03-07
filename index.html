@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+  <title>Ishani Roy – Cricket Updates</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: #020d1a;
+      overflow-x: hidden;
+    }
+
+    /* ── CRICKET BACKGROUND ── */
+    .bg-img {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-image: url('https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=1600&q=55&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center center;
+      filter: blur(10px) brightness(0.25) saturate(0.8);
+      transform: scale(1.1);
+    }
+
+    /* cyan tinted overlay */
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(0,200,230,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse at 50% 100%, rgba(0,100,180,0.22) 0%, transparent 60%),
+        linear-gradient(180deg, rgba(2,13,26,0.6) 0%, rgba(2,13,26,0.75) 100%);
+    }
+
+    /* ── FULL PAGE CENTERED LAYOUT ── */
+    .page {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    /* ── GLASS CARD ── */
+    .card {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(0, 220, 255, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 220, 255, 0.2);
+      border-radius: 28px;
+      padding: 36px 28px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow:
+        0 0 0 1px rgba(0,220,255,0.08) inset,
+        0 8px 60px rgba(0,0,0,0.6),
+        0 0 80px rgba(0,180,220,0.08);
+      animation: cardIn .8s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(32px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ── AVATAR — perfectly centered ── */
+    .av-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      width: 130px;
+      height: 130px;
+      margin: 0 auto 20px auto;
+      animation: up .7s .15s both;
+    }
+
+    .av-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: conic-gradient(#00e5ff, #0077b6, #00e5ff, #48cae4, #00e5ff);
+      animation: spin 4s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .av-inner {
+      position: absolute;
+      inset: 5px;
+      border-radius: 50%;
+      background: #020d1a;
+      z-index: 1;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .av-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    .av-badge {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      z-index: 3;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00e5ff, #0077b6);
+      border: 2px solid #020d1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    /* ── LIVE PILL ── */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,229,255,0.1);
+      border: 1px solid rgba(0,229,255,0.3);
+      border-radius: 999px;
+      padding: 5px 16px;
+      color: #00e5ff;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .5px;
+      margin-bottom: 16px;
+      animation: up .7s .25s both;
+    }
+
+    .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #00e5ff;
+      animation: blink 1.4s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+    /* ── HEADING ── */
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.75rem, 6vw, 2.6rem);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 8px;
+      animation: up .7s .33s both;
+    }
+
+    h1 span {
+      background: linear-gradient(90deg, #00e5ff 0%, #48cae4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .handle {
+      color: rgba(0,229,255,0.45);
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      animation: up .7s .4s both;
+    }
+
+    /* ── DESC ── */
+    .desc {
+      color: rgba(255,255,255,0.68);
+      font-size: clamp(13px, 3vw, 14.5px);
+      line-height: 1.78;
+      margin-bottom: 20px;
+      animation: up .7s .47s both;
+    }
+
+    /* ── TAGS ── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 7px;
+      margin-bottom: 24px;
+      animation: up .7s .54s both;
+    }
+
+    .tag {
+      background: rgba(0,229,255,0.07);
+      border: 1px solid rgba(0,229,255,0.18);
+      border-radius: 999px;
+      padding: 5px 13px;
+      font-size: 11px;
+      color: rgba(0,229,255,0.85);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ── CTA BUTTON ── */
+    .btn-wrap {
+      width: 100%;
+      animation: up .7s .61s both;
+    }
+
+    .cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 15px 20px;
+      background: linear-gradient(135deg, #00e5ff 0%, #0077b6 100%);
+      color: #020d1a;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 999px;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      animation: zoom 2.5s ease-in-out infinite;
+      box-shadow: 0 0 0 0 rgba(0,229,255,0.4), 0 6px 24px rgba(0,120,180,0.4);
+      -webkit-tap-highlight-color: transparent;
+      letter-spacing: .2px;
+    }
+
+    .cta::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -70%;
+      width: 50%; height: 200%;
+      background: rgba(255,255,255,0.28);
+      transform: skewX(-20deg);
+      animation: shim 3s ease-in-out infinite;
+    }
+
+    @keyframes shim { 0%{left:-70%} 100%{left:130%} }
+
+    @keyframes zoom {
+      0%,100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(0,229,255,0.4), 0 6px 24px rgba(0,120,180,0.4);
+      }
+      50% {
+        transform: scale(1.045);
+        box-shadow: 0 0 0 13px rgba(0,229,255,0), 0 6px 24px rgba(0,120,180,0.4);
+      }
+    }
+
+    .cta:active { transform: scale(.96) !important; animation: none; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 60%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,229,255,0.2), transparent);
+      margin: 20px auto 0;
+      animation: up .7s .75s both;
+    }
+
+    /* ── DISCLAIMER ── */
+    .disclaimer {
+      margin-top: 14px;
+      font-size: 10px;
+      color: rgba(255,255,255,0.25);
+      line-height: 1.65;
+      animation: up .7s .8s both;
+    }
+
+    /* ── CREDIT ── */
+    .credit {
+      margin-top: 10px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      animation: up .7s .88s both;
+    }
+    .credit a {
+      color: #00e5ff;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    @keyframes up {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 380px) {
+      .card { padding: 28px 18px 22px; border-radius: 20px; }
+      .av-wrap { width: 110px; height: 110px; }
+      h1 { font-size: 1.6rem; }
+      .cta { font-size: 14px; padding: 13px 16px; }
+    }
+
+    @media (min-width: 768px) {
+      .card { max-width: 440px; padding: 44px 40px 36px; }
+      .av-wrap { width: 140px; height: 140px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-img"></div>
+  <div class="bg-overlay"></div>
+
+  <main class="page">
+    <div class="card">
+
+      <!-- ── LOGO / AVATAR centered ── -->
+      <div class="av-wrap">
+        <div class="av-ring"></div>
+        <div class="av-inner">
+          <img class="av-img"
+               src="ishaniii.jpg"
+               alt="Ishani Roy"
+               loading="eager"
+               onerror="this.style.background='#0a2a3a';this.removeAttribute('src')"/>
+        </div>
+        <div class="av-badge">🏏</div>
+      </div>
+
+      <!-- Live Pill -->
+      <div class="pill">
+        <div class="dot"></div>
+        14,407 Subscribers
+      </div>
+
+      <!-- Heading -->
+      <h1>Ishani Roy<br/><span>Cricket Updates</span></h1>
+      <p class="handle">@ishaniroy_cricket_updates</p>
+
+      <!-- Description -->
+      <p class="desc">
+        Expert cricket analysis, match predictions &amp; live trading insights — for fans who want to stay ahead of every delivery.
+      </p>
+
+      <!-- Tags -->
+      <div class="tags">
+        <div class="tag">📊 Match Analysis</div>
+        <div class="tag">🔮 Predictions</div>
+        <div class="tag">📈 Trading Tips</div>
+        <div class="tag">🏆 Live Updates</div>
+      </div>
+
+      <!-- CTA Button -->
+      <div class="btn-wrap">
+        <a class="cta" href="https://t.me/+qb7trV7pVC5iMDJl" target="_blank" rel="noopener">
+          ✈️ Join Telegram Channel
+        </a>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Disclaimer -->
+      <p class="disclaimer">
+        For cricket education &amp; analysis only. We do not promote betting, gambling, or any illegal activities.
+      </p>
+
+      <!-- Credit -->
+      <div class="credit">
+        ads managed by <a href="https://t.me/+TRlJl628l-FkMWE9" target="_blank" rel="noopener">@Nexgroww_agency</a>
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>
