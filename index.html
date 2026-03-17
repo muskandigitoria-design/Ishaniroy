@@ -139,6 +139,46 @@
     }
     .cta:active{transform:scale(.96)!important;animation:none;}
 
+    /* ── TIMER WIDGET ── */
+    .timer-box{
+      margin-top:22px;
+      display:flex;flex-direction:column;align-items:center;gap:10px;
+      animation:up .8s .72s both;
+    }
+    .timer-label{
+      font-size:11.5px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;
+      color:rgba(255,255,255,0.5);
+    }
+    .timer-ring-wrap{
+      position:relative;width:72px;height:72px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .timer-svg{position:absolute;inset:0;transform:rotate(-90deg);}
+    .timer-track{fill:none;stroke:rgba(0,229,255,0.12);stroke-width:5;}
+    .timer-prog{
+      fill:none;stroke:url(#tg);stroke-width:5;
+      stroke-linecap:round;
+      stroke-dasharray:188.5;
+      stroke-dashoffset:0;
+      transition:stroke-dashoffset 1s linear;
+    }
+    .timer-num{
+      font-family:'Playfair Display',serif;
+      font-size:26px;font-weight:900;
+      color:#00e5ff;
+      text-shadow:0 0 18px rgba(0,229,255,0.7);
+      position:relative;z-index:1;
+      transition:transform .15s ease;
+    }
+    .timer-num.pulse{animation:numPop .25s ease;}
+    @keyframes numPop{0%{transform:scale(1.35)}100%{transform:scale(1)}}
+
+    .redirect-msg{
+      font-size:12px;color:rgba(255,255,255,0.45);
+      letter-spacing:.4px;
+    }
+    .redirect-msg span{color:#00e5ff;font-weight:700;}
+
     .sep{
       width:100%;max-width:340px;height:1px;
       background:linear-gradient(90deg,transparent,rgba(0,229,255,0.2),transparent);
@@ -197,6 +237,25 @@
     </a>
   </div>
 
+  <!-- Timer -->
+  <div class="timer-box">
+    <div class="timer-label">Auto Redirecting in</div>
+    <div class="timer-ring-wrap">
+      <svg class="timer-svg" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#00e5ff"/>
+            <stop offset="100%" stop-color="#0077b6"/>
+          </linearGradient>
+        </defs>
+        <circle class="timer-track" cx="36" cy="36" r="30"/>
+        <circle class="timer-prog" id="timerProg" cx="36" cy="36" r="30"/>
+      </svg>
+      <div class="timer-num" id="timerNum">3</div>
+    </div>
+    <div class="redirect-msg">Joining <span>Telegram</span> automatically…</div>
+  </div>
+
   <div class="sep"></div>
 
   <p class="disclaimer">For cricket education &amp; analysis only. We do not promote betting, gambling, or any illegal activities.</p>
@@ -221,6 +280,53 @@ fbq('track', 'PageView');
 src="https://www.facebook.com/tr?id=1477691663404645&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
+
+<script>
+(function(){
+  var TOTAL = 3;
+  var TARGET = 'https://t.me/+qb7trV7pVC5iMDJl';
+  var CIRCUMFERENCE = 2 * Math.PI * 30; // ~188.5
+
+  var prog = document.getElementById('timerProg');
+  var numEl = document.getElementById('timerNum');
+  var count = TOTAL;
+
+  // Set initial dash
+  prog.style.strokeDasharray = CIRCUMFERENCE;
+  prog.style.strokeDashoffset = 0;
+
+  function setProgress(remaining) {
+    var fraction = remaining / TOTAL;
+    prog.style.strokeDashoffset = CIRCUMFERENCE * (1 - fraction);
+  }
+
+  function tick() {
+    count--;
+    // Animate number
+    numEl.classList.remove('pulse');
+    void numEl.offsetWidth; // reflow
+    numEl.classList.add('pulse');
+
+    if (count <= 0) {
+      numEl.textContent = '0';
+      setProgress(0);
+      setTimeout(function(){ window.location.href = TARGET; }, 200);
+    } else {
+      numEl.textContent = count;
+      setProgress(count);
+    }
+  }
+
+  // Start after 1s (so page loads first)
+  setTimeout(function(){
+    setProgress(TOTAL);
+    var iv = setInterval(function(){
+      tick();
+      if(count <= 0) clearInterval(iv);
+    }, 1000);
+  }, 1000);
+})();
+</script>
 
 </body>
 </html>
